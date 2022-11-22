@@ -4,40 +4,41 @@ import { config } from "./config";
 
 async function main() {
   const MerkleTreeVestingFactory = await ethers.getContractFactory(
-    'MerkleTreeVesting'
+    "MerkleTreeVesting"
   );
   const merkleTreeVesting = await MerkleTreeVestingFactory.deploy(
     config.start,
     config.cliff,
     config.duration,
-    config.token,
     config.merkleRoot
   );
 
   await merkleTreeVesting.deployed();
 
-  console.log(
-    `MerkleTreeVesting was deployed to ${merkleTreeVesting.address}`
-  );
+  console.log(`MerkleTreeVesting was deployed to ${merkleTreeVesting.address}`);
+
+  await merkleTreeVesting.connectToOtherContracts([config.token]);
 
   try {
-    console.log('\n>>>>>>>>>>>> Verification >>>>>>>>>>>>\n');
+    console.log("\n>>>>>>>>>>>> Verification >>>>>>>>>>>>\n");
 
-    console.log('Verifying: ', merkleTreeVesting.address);
-    await run('verify:verify', {
+    console.log("Verifying: ", merkleTreeVesting.address);
+    await run("verify:verify", {
       address: merkleTreeVesting.address,
-      constructorArguments: [config.start,
+      constructorArguments: [
+        config.start,
         config.cliff,
         config.duration,
         config.token,
-        config.merkleRoot],
+        config.merkleRoot,
+      ],
     });
   } catch (error) {
     if (
       error instanceof NomicLabsHardhatPluginError &&
-      error.message.includes('Reason: Already Verified')
+      error.message.includes("Reason: Already Verified")
     ) {
-      console.log('Already verified, skipping...');
+      console.log("Already verified, skipping...");
     } else {
       console.error(error);
     }

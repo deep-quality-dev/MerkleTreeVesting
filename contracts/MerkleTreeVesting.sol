@@ -3,10 +3,11 @@ pragma solidity ^0.8.9;
 
 // Uncomment this line to use console.log
 // import "hardhat/console.sol";
+import {IBunzz} from "./interfaces/IBunzz.sol";
 import {TokenVesting} from "./TokenVesting.sol";
 import {MerkleDistributor} from "./MerkleDistributor.sol";
 
-contract MerkleTokenVesting is TokenVesting, MerkleDistributor {
+contract MerkleTokenVesting is TokenVesting, MerkleDistributor, IBunzz {
   event Claimed(uint256 index, address account, uint256 amount, bool revocable);
 
   /**
@@ -20,9 +21,14 @@ contract MerkleTokenVesting is TokenVesting, MerkleDistributor {
     uint256 start,
     uint256 cliff,
     uint256 duration,
-    address token,
     bytes32 merkleRoot
-  ) TokenVesting(start, cliff, duration, token) MerkleDistributor(merkleRoot) {}
+  ) TokenVesting(start, cliff, duration) MerkleDistributor(merkleRoot) {}
+
+  function connectToOtherContracts(
+    address[] memory otherContracts
+  ) external override onlyOwner {
+    _setTokenContract(otherContracts[0]);
+  }
 
   function claimAward(
     uint256 index,

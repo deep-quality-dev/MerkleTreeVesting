@@ -67,9 +67,9 @@ describe("End 2 End Tests - Merkle Token Vesting", () => {
         vestingStartBlock,
         vestingCliff,
         vestingDuration,
-        token.address,
         merkleTree.merkleRoot
       );
+      await merkleVesting.connectToOtherContracts([token.address]);
     });
   });
 

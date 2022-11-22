@@ -40,13 +40,12 @@ abstract contract TokenVesting is Ownable {
 
   IERC20 public targetToken;
 
-  constructor(uint256 start, uint256 cliff, uint256 duration, address token) {
+  constructor(uint256 start, uint256 cliff, uint256 duration) {
     require(cliff <= duration, "Cliff must be less than duration");
 
     vestingStart = start;
     vestingCliff = start + cliff;
     vestingDuration = duration;
-    targetToken = IERC20(token);
   }
 
   /**
@@ -151,5 +150,10 @@ abstract contract TokenVesting is Ownable {
   ) internal view returns (TokenAward storage) {
     TokenAward storage award = awards[beneficiary];
     return award;
+  }
+
+  function _setTokenContract(address token) internal {
+    require(address(targetToken) != token, "Same token address");
+    targetToken = IERC20(token);
   }
 }
