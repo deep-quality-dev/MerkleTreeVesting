@@ -153,7 +153,8 @@ abstract contract TokenVesting is Ownable {
   }
 
   function _setTokenContract(address token) internal {
-    require(address(targetToken) != token, "Same token address");
+    require(address(targetToken) == address(0), "Already initialized");
+    require(token != address(0), "Invalid token address");
     targetToken = IERC20(token);
   }
 }
